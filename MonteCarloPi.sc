@@ -8,8 +8,7 @@
  * Determine whether a randomly generated (x, y) coordinate lies within the unit circle.
  */
 
-def incircle(pair : (Double, Double)): Boolean  =  pair._1 * pair._1 + pair._2 * pair._2 <= 1.0
-
+val incircle: ((Double, Double)) => Boolean = { case (x, y) => x * x + y * y <= 1.0 }
 /*
  * Generate a Stream of an arbitrary number of uniform deviate pairs (x, y).
  * Shows also how to get the first N pairs (for going a specified number of iterations).
@@ -73,6 +72,7 @@ val intSizes: Stream[Int] = 1 #:: intSizes.map(_ * 10)
 val longSizes: Stream[Long] = 1L #:: longSizes.map(_ * 10L)
 val problemSizes = longSizes.drop(5).take(5)
 val chunkSizes = intSizes.drop(3).take(3)
+
 println("Trying these probem sizes")
 problemSizes foreach println
 println("Trying these chunk sizes")
@@ -83,11 +83,3 @@ for (numDarts <- problemSizes)
     println("numDarts: " + numDarts + " chunkSize: " + chunkSize)
     time { MonteCarloCircleArea(numDarts, chunkSize) }
   }
-
-
-
-
-
-
-
-
