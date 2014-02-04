@@ -54,6 +54,25 @@ def MonteCarloCircleArea(numDarts : Long, chunkSize : Int) : Double = {
   return 4.0 * dartsInCircle.toDouble / numDarts.toDouble
 }
 
-MonteCarloCircleArea(100000500L, 100000)
+// Courtesy of this posting on StackOverflow:
+// http://stackoverflow.com/questions/9160001/how-to-profile-methods-in-scala
+
+def time[R](block: => R): R = {
+  val t0 = System.nanoTime()
+  val result = block    // call-by-name
+  val t1 = System.nanoTime()
+  println("Elapsed time: " + (t1 - t0) + "ns")
+  println("Elapsed time: " + (t1 - t0).toDouble / 1.0e9 + "s")
+  result
+}
+// Some quick timing experiments, to be generalized.
+time { MonteCarloCircleArea(1000L, 1000) }
+time { MonteCarloCircleArea(10000L, 1000) }
+time { MonteCarloCircleArea(100000L, 1000) }
+time { MonteCarloCircleArea(1000000L, 1000) }
+time { MonteCarloCircleArea(10000000L, 1000) }
+time { MonteCarloCircleArea(10000000L, 10000) }
+time { MonteCarloCircleArea(10000000L, 100000) }
+
 
 
