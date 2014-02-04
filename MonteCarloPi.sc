@@ -7,29 +7,29 @@
 /*
  * Determine whether a randomly generated (x, y) coordinate lies within the unit circle.
  */
+def sqr(x: Double) = x * x
+val inCircle: ((Double, Double)) => Boolean = { case (x, y) => sqr(x) + sqr(y) <= 1.0 }
 
-val incircle: ((Double, Double)) => Boolean = { case (x, y) => x * x + y * y <= 1.0 }
 /*
  * Generate a Stream of an arbitrary number of uniform deviate pairs (x, y).
  * Shows also how to get the first N pairs (for going a specified number of iterations).
  */
-val N = 10000
-val darts = Stream.continually((math.random, math.random)).take(N)
+val randomPairs = Stream continually (math.random, math.random)
+
+val n = 10000
+val darts = randomPairs take n
 
 /*
  * Finding the number of darts that hit the circle is a matter of finding those that lie within the circle.
  * For example (0.5, 0.5) is in the circle; (0.9, 0.9) is not.
  */
-
-val dartsInCircle = darts.filter(incircle)
-
-val totalDarts = darts.length
+val dartsInCircle = darts filter inCircle
+val totalDarts = darts length
 
 /*
  * The 4.0 comes from the area of the square that bounds the circle from (-1.0, -1.0) to (1.0, 1.0).
  */
-val area = 4.0 * darts.filter(incircle).length.toDouble / darts.length
-
+val area = 4.0 * dartsInCircle.length.toDouble / totalDarts
 println("The area is " + area)
 
 /*
@@ -39,18 +39,17 @@ println("The area is " + area)
  * discrete chunks (of chunkSize). This allows us to get the required number of iterations to approximate
  * pi (almost) as closely as desired.
  */
-def IntDartsInCircle(numDarts : Int) : Long = {
-  val darts = Stream.continually( (math.random, math.random))
-  val dartsInCircle = darts.take(numDarts).filter(incircle)
+def intDartsInCircle(numDarts: Int): Long = {
+  val dartsInCircle = randomPairs take numDarts filter inCircle
   dartsInCircle.length
 }
 
-def MonteCarloCircleArea(numDarts : Long, chunkSize : Int) : Double = {
+def monteCarloCircleArea(numDarts: Long, chunkSize: Int): Double = {
   val numChunks = (numDarts / chunkSize).toInt
   val remainder = (numDarts % chunkSize).toInt
-  def IntDartsBound() = IntDartsInCircle(chunkSize)
-  val dartsInCircle = IntDartsInCircle(remainder) + Stream.continually( IntDartsBound ).take(numChunks).sum
-  return 4.0 * dartsInCircle.toDouble / numDarts.toDouble
+  def intDartsBound() = intDartsInCircle(chunkSize)
+  val dartsInCircle = intDartsInCircle(remainder) + Stream.continually(intDartsBound).take(numChunks).sum
+  4.0 * dartsInCircle.toDouble / numDarts.toDouble
 }
 
 // Courtesy of this posting on StackOverflow:
@@ -65,21 +64,20 @@ def time[R](block: => R): R = {
   result
 }
 
-
 // Quick performance study.
-
-val intSizes: Stream[Int] = 1 #:: intSizes.map(_ * 10)
-val longSizes: Stream[Long] = 1L #:: longSizes.map(_ * 10L)
-val problemSizes = longSizes.drop(5).take(5)
-val chunkSizes = intSizes.drop(3).take(3)
+val sizes: Stream[Long] = 1L #:: sizes map { _ * 10L }
+val problemSizes = sizes drop 5 take 5
+val chunkSizes = sizes drop 3 take 3 map { _.toInt }
 
 println("Trying these probem sizes")
 problemSizes foreach println
+
 println("Trying these chunk sizes")
 chunkSizes foreach println
 
 for (numDarts <- problemSizes)
   for (chunkSize <- chunkSizes) {
     println("numDarts: " + numDarts + " chunkSize: " + chunkSize)
-    time { MonteCarloCircleArea(numDarts, chunkSize) }
+    val area = time { monteCarloCircleArea(numDarts, chunkSize) }
+    println("The area is " + area)
   }
