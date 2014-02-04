@@ -65,14 +65,29 @@ def time[R](block: => R): R = {
   println("Elapsed time: " + (t1 - t0).toDouble / 1.0e9 + "s")
   result
 }
-// Some quick timing experiments, to be generalized.
-time { MonteCarloCircleArea(1000L, 1000) }
-time { MonteCarloCircleArea(10000L, 1000) }
-time { MonteCarloCircleArea(100000L, 1000) }
-time { MonteCarloCircleArea(1000000L, 1000) }
-time { MonteCarloCircleArea(10000000L, 1000) }
-time { MonteCarloCircleArea(10000000L, 10000) }
-time { MonteCarloCircleArea(10000000L, 100000) }
+
+
+// Quick performance study.
+
+val intSizes: Stream[Int] = 1 #:: intSizes.map(_ * 10)
+val longSizes: Stream[Long] = 1L #:: longSizes.map(_ * 10L)
+val problemSizes = longSizes.drop(5).take(5)
+val chunkSizes = intSizes.drop(3).take(3)
+println("Trying these probem sizes")
+problemSizes foreach println
+println("Trying these chunk sizes")
+chunkSizes foreach println
+
+for (numDarts <- problemSizes)
+  for (chunkSize <- chunkSizes) {
+    println("numDarts: " + numDarts + " chunkSize: " + chunkSize)
+    time { MonteCarloCircleArea(numDarts, chunkSize) }
+  }
+
+
+
+
+
 
 
 
