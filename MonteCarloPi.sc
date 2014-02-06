@@ -16,21 +16,21 @@ val inCircle: ((Double, Double)) => Boolean = { case (x, y) => sqr(x) + sqr(y) <
  */
 val randomPairs = Stream continually (math.random, math.random)
 
-val n = 10000
+val n = 1000000 // memoization: will run out of heap space for 10^7
 val darts = randomPairs take n
 
 /*
  * Finding the number of darts that hit the circle is a matter of finding those that lie within the circle.
  * For example (0.5, 0.5) is in the circle; (0.9, 0.9) is not.
  */
-val dartsInCircle = darts filter (inCircle)
+val dartsInCircle = darts count inCircle
 val totalDarts = darts length
 
 /*
  * The 4.0 comes from the area of the square that bounds the circle from (-1.0, -1.0) to (1.0, 1.0).
  */
-val area = 4.0 * dartsInCircle.length.toDouble / totalDarts
-println("The area is " + area)
+val area = 4.0 * dartsInCircle.toDouble / totalDarts
+println("pi = " + area + " with " + totalDarts + " darts")
 
 /*
  * Putting it all together. We provide a core method to compute the number of darts that hit the circle,
@@ -38,17 +38,17 @@ println("The area is " + area)
  * elements, we drive this method with MonteCarloCircleArea that breaks up a long number of darts into
  * discrete chunks (of chunkSize). This allows us to get the required number of iterations to approximate
  * pi (almost) as closely as desired.
+ *
+ * FIXME successive invocations of longDartsInCircle need to pull darts from the point where the
+ * previous invocation left off
  */
-def intDartsInCircle(numDarts: Int): Long = {
-  val dartsInCircle = randomPairs take numDarts filter inCircle
-  dartsInCircle.length
-}
+def longDartsInCircle(numDarts: Int): Long = randomPairs take numDarts count inCircle
 
 def monteCarloCircleArea(numDarts: Long, chunkSize: Int): Double = {
   val numChunks = (numDarts / chunkSize).toInt
   val remainder = (numDarts % chunkSize).toInt
-  def intDartsBound() = intDartsInCircle(chunkSize)
-  val dartsInCircle = intDartsInCircle(remainder) + Stream.continually(intDartsBound).take(numChunks).sum
+  def longDartsBound() = longDartsInCircle(chunkSize)
+  val dartsInCircle = longDartsInCircle(remainder) + Stream.continually(longDartsBound).take(numChunks).sum
   4.0 * dartsInCircle.toDouble / numDarts.toDouble
 }
 
@@ -59,7 +59,7 @@ def time[R](block: => R): R = {
   val t0 = System.nanoTime()
   val result = block    // call-by-name
   val t1 = System.nanoTime()
-  println("Elapsed time: " + (t1 - t0) + "ns")
+//  println("Elapsed time: " + (t1 - t0) + "ns")
   println("Elapsed time: " + (t1 - t0).toDouble / 1.0e9 + "s")
   result
 }
