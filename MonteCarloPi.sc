@@ -23,7 +23,7 @@ val darts = randomPairs take n
  * Finding the number of darts that hit the circle is a matter of finding those that lie within the circle.
  * For example (0.5, 0.5) is in the circle; (0.9, 0.9) is not.
  */
-val dartsInCircle = darts filter inCircle
+val dartsInCircle = darts filter (inCircle)
 val totalDarts = darts length
 
 /*
@@ -81,3 +81,4 @@ for (numDarts <- problemSizes)
     val area = time { monteCarloCircleArea(numDarts, chunkSize) }
     println("The area is " + area)
   }
+
