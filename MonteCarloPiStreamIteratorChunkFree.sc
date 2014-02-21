@@ -51,14 +51,17 @@ val area = 4.0 * dartsInCircle.toDouble / totalDarts
  */
 def longDartsInCircle(numDarts: Int): Long = randomPairs take numDarts count inCircle
 
+/* begin-monteCarloCircleArea */
 def monteCarloCircleArea(numDarts: Int): Double = {
   val dartsInCircle = longDartsInCircle(numDarts)
   4.0 * dartsInCircle.toDouble / numDarts.toDouble
 }
+/* end-monteCarloCircleArea */
 
 // Courtesy of this posting on StackOverflow:
 // http://stackoverflow.com/questions/9160001/how-to-profile-methods-in-scala
 
+/* begin-time */
 def time[R](block: => R): R = {
   val t0 = System.nanoTime()
   val result = block    // call-by-name
@@ -66,9 +69,11 @@ def time[R](block: => R): R = {
   println("Elapsed time: " + (t1 - t0).toDouble / 1.0e9 + "s")
   result
 }
+/* end-time */
 
-// Quick performance study.
-val sizes: Stream[Int] = 1 #:: sizes map { _ * 10 }
+/* begin-performance-study */
+val powers = 1 to math.log10(Int.MaxValue).floor.toInt
+val sizes = powers map { math.pow(10, _).toInt } 
 val problemSizes = sizes drop 5 take 5
 
 println("Trying these probem sizes")
@@ -79,4 +84,4 @@ for (numDarts <- problemSizes) {
   val area = time { monteCarloCircleArea(numDarts) }
   println("The area is " + area)
 }
-
+/* end-performance-study */

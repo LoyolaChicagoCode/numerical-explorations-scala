@@ -47,9 +47,10 @@ def time[R](block: => R): R = {
 }
 
 // Quick performance study.
-val sizes: Stream[Long] = 1L #:: sizes map { _ * 10L }
+val powers = 1 to 10
+val sizes: powers.map( math.pow(10, _) toInt)
 val problemSizes = sizes drop 5 take 5
-val chunkSizes = sizes drop 4 take 1 map { _ toInt }
+val chunkSizes = sizes drop 4 take 1
 
 println("Trying these probem sizes")
 problemSizes foreach println
