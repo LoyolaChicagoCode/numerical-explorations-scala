@@ -62,7 +62,7 @@ def monteCarloCircleArea(numDarts: Int): Double = {
 // http://stackoverflow.com/questions/9160001/how-to-profile-methods-in-scala
 
 /* begin-time */
-def nanoTime[R](block: => R): (Long, R) = {
+def nanoTime[R](block: => R): (Double, R) = {
   val t0 = System.nanoTime()
   val result = block    // call-by-name
   val t1 = System.nanoTime()
