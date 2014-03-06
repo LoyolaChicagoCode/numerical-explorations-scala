@@ -62,12 +62,17 @@ def monteCarloCircleArea(numDarts: Int): Double = {
 // http://stackoverflow.com/questions/9160001/how-to-profile-methods-in-scala
 
 /* begin-time */
-def time[R](block: => R): R = {
+def nanoTime[R](block: => R): (Long, R) = {
   val t0 = System.nanoTime()
   val result = block    // call-by-name
   val t1 = System.nanoTime()
-  println("Elapsed time: " + (t1 - t0).toDouble / 1.0e9 + "s")
-  result
+  ((t1-t0), result)
+}
+
+def secondsTime[R](block: => R): (Double, R) = {
+  nanoTime(block) match {
+    case (runTime, result) => (runTime / 1.0e9, result)
+  }
 }
 /* end-time */
 
@@ -76,12 +81,13 @@ val powers = 1 to math.log10(Int.MaxValue).floor.toInt
 val sizes = powers map { math.pow(10, _).toInt } 
 val problemSizes = sizes drop 5 take 5
 
-println("Trying these probem sizes")
-problemSizes foreach println
-
-for (numDarts <- problemSizes) {
-  println("numDarts: " + numDarts)
-  val area = time { monteCarloCircleArea(numDarts) }
-  println("The area is " + area)
+val results = for (numDarts <- problemSizes) yield {
+  val result = secondsTime { monteCarloCircleArea(numDarts) }
+  result match {
+    case (runTime, result) => println(s"t = $runTime, pi = $result")
+  }
+  result
 }
+
+println(results)
 /* end-performance-study */
