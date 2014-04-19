@@ -26,7 +26,7 @@ val chunkedRandomPairs = randomPairs grouped chunkSize
 
 val numChunks = numDarts / chunkSize
 // convert chunkwise counts to Long to avoid overflow during summation
-val dartsInCircle = chunkedRandomPairs take numChunks map { _ count inCircle toLong } sum
+val dartsInCircle = chunkedRandomPairs.take(numChunks).map(_.count(inCircle).toLong).sum
 val pi = 4.0 * dartsInCircle / numDarts
 println("pi = " + pi + " with " + numDarts + " darts")
 
@@ -41,7 +41,7 @@ println("pi = " + pi + " with " + numDarts + " darts")
  */
 def monteCarloCircleArea(numDarts: Long, chunkSize: Int) = {
   val numChunks = (numDarts / chunkSize).toInt
-  val dartsInCircle = randomPairs grouped chunkSize take numChunks map { _ count inCircle toLong } sum ;
+  val dartsInCircle = randomPairs.grouped(chunkSize).take(numChunks).map(_.count(inCircle).toLong).sum
   4.0 * dartsInCircle / numDarts
 }
 
