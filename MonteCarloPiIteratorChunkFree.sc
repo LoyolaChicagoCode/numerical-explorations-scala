@@ -40,6 +40,7 @@ val dartsInCircle = darts count inCircle
  * (-1.0, -1.0) to (1.0, 1.0).
  */
 val area = 4.0 * dartsInCircle.toDouble / totalDarts
+println("pi = " + area + " with " + totalDarts + " darts")
 
 /*
  * Putting it all together. We provide a core method to compute the number
