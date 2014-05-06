@@ -3,7 +3,7 @@
  */
 
 /** The desired accuracy. */
-val eps = 1e-10
+val eps = 1e-10 // TODO make implicit
 
 /** Functionally iterates until a given predicate is satisfied. */
 def iterateUntil[A](x0: A, f: A => A, p: (A, A) => Boolean): A = Iterator.iterate {
