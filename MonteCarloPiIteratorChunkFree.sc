@@ -15,8 +15,9 @@
 /*
  * Determine whether a randomly generated (x, y) coordinate lies within the unit circle.
  */
-def sqr(x: Double) = x * x
-val inCircle: ((Double, Double)) => Boolean = { case (x, y) => sqr(x) + sqr(y) <= 1.0 }
+def square(x: Double) = x * x
+val inCircle: ((Double, Double)) => Boolean = 
+  case (x, y) => square(x) + square(y) <= 1.0
 
 /*
  * Create an Iterator of an arbitrary number of uniform deviate
@@ -49,36 +50,31 @@ println("pi = " + area + " with " + totalDarts + " darts")
 def longDartsInCircle(numDarts: Int): Long = randomPairs take numDarts count inCircle
 
 /* begin-monteCarloCircleArea */
-def monteCarloCircleArea(numDarts: Int): Double = {
+def monteCarloCircleArea(numDarts: Int): Double =
   val dartsInCircle = longDartsInCircle(numDarts)
   4.0 * dartsInCircle.toDouble / numDarts.toDouble
-}
 /* end-monteCarloCircleArea */
 
 // Courtesy of this posting on StackOverflow:
 // http://stackoverflow.com/questions/9160001/how-to-profile-methods-in-scala
 
 /* begin-time */
-def nanoTime[R](block: => R): (Double, R) = {
+def nanoTime[R](block: => R): (Double, R) =
   val t0 = System.nanoTime()
   val result = block    // call-by-name
   val t1 = System.nanoTime()
   (t1 - t0, result)
-}
 
-def secondsTime[R](block: => R): (Double, R) = {
-  nanoTime(block) match {
+def secondsTime[R](block: => R): (Double, R) =
+  nanoTime(block) match
     case (runTime, result) => (runTime / 1.0e9, result)
-  }
-}
 /* end-time */
 
 /* begin-performance-study */
 val powers = 1 to math.log10(Int.MaxValue).floor.toInt
-val sizes = powers map { math.pow(10, _).toInt } 
+val sizes = powers map ( math.pow(10, _).toInt )
 
-for { problemSize <- sizes drop 5 take 5 } {
-  val (runTime, result) = secondsTime { monteCarloCircleArea(problemSize) }
+for problemSize <- sizes drop 5 take 5 do
+  val (runTime, result) = secondsTime ( monteCarloCircleArea(problemSize) )
   println(s"n = $problemSize, t = $runTime, pi = $result")
-}
 /* end-performance-study */
