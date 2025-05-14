@@ -15,9 +15,9 @@
 /*
  * Determine whether a randomly generated (x, y) coordinate lies within the unit circle.
  */
-def square(x: Double) = x * x
-val inCircle: ((Double, Double)) => Boolean = 
-  case (x, y) => square(x) + square(y) <= 1.0
+def sqr(x: Double) = x * x
+val inCircle: ((Double, Double)) => Boolean =
+  case (x, y) => sqr(x) + sqr(y) <= 1.0
 
 /*
  * Create an Iterator of an arbitrary number of uniform deviate
@@ -75,6 +75,6 @@ val powers = 1 to math.log10(Int.MaxValue).floor.toInt
 val sizes = powers map ( math.pow(10, _).toInt )
 
 for problemSize <- sizes drop 5 take 5 do
-  val (runTime, result) = secondsTime ( monteCarloCircleArea(problemSize) )
+  val (runTime, result) = secondsTime monteCarloCircleArea(problemSize)
   println(s"n = $problemSize, t = $runTime, pi = $result")
 /* end-performance-study */
