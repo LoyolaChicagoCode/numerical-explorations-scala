@@ -63,7 +63,7 @@ def nanoTime[R](block: => R): (Double, R) =
   val t0 = System.nanoTime()
   val result = block    // call-by-name
   val t1 = System.nanoTime()
-  (t1 - t0, result)
+  ((t1 - t0).toDouble, result)
 
 def secondsTime[R](block: => R): (Double, R) =
   nanoTime(block) match
@@ -75,6 +75,6 @@ val powers = 1 to math.log10(Int.MaxValue).floor.toInt
 val sizes = powers map ( math.pow(10, _).toInt )
 
 for problemSize <- sizes drop 5 take 5 do
-  val (runTime, result) = secondsTime monteCarloCircleArea(problemSize)
+  val (runTime, result) = secondsTime ( monteCarloCircleArea(problemSize) )
   println(s"n = $problemSize, t = $runTime, pi = $result")
 /* end-performance-study */
