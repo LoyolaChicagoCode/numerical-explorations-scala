@@ -12,22 +12,27 @@
  * values.
  */
 
-/*
- * Determine whether a randomly generated (x, y) coordinate lies within the unit circle.
+/**
+ * Case class to represent a simple 2d point.
  */
-def sqr(x: Double) = x * x
-val inCircle: ((Double, Double)) => Boolean =
-  case (x, y) => sqr(x) + sqr(y) <= 1.0
+case class Point2d(x: Double, y: Double)
+
+/*
+ * Determine whether a randomly generated 2d point lies within the unit circle.
+ */
+def square(x: Double) = x * x
+
+val inCircle: (p: Point2d) => Boolean =
+  case Point2d(x, y) => square(x) + square(y) <= 1.0
 
 /*
  * Create an Iterator of an arbitrary number of uniform deviate
- * pairs (x, y). Shows also how to get the first N pairs (for going
+ * 2d points (x, y). Shows also how to get the first N points (for going
  * a specified number of iterations).
  */
-val randomPairs = Iterator continually (math.random, math.random)
-
+val randomPoints = Iterator continually Point2d(math.random, math.random)
 val totalDarts = 10000000
-val darts = randomPairs take totalDarts
+val darts = randomPoints take totalDarts
 
 /*
  * Finding the number of darts that hit the circle is a matter of finding
@@ -47,7 +52,7 @@ println("pi = " + area + " with " + totalDarts + " darts")
  * Putting it all together. We provide a core method to compute the number
  * of darts that hit the circle, which works with an Int number of darts.
  */
-def longDartsInCircle(numDarts: Int): Long = randomPairs take numDarts count inCircle
+def longDartsInCircle(numDarts: Int): Long = randomPoints take numDarts count inCircle
 
 /* begin-monteCarloCircleArea */
 def monteCarloCircleArea(numDarts: Int): Double =
